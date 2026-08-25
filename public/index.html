@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>動漫變身鏡｜AI 照片風格生成</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1>✨ 動漫變身鏡</h1>
+      <p>拍張照，秒變日系動漫角色</p>
+    </header>
+
+    <main class="card">
+      <!-- Step 1: 取得照片 -->
+      <section id="step-capture" class="step active">
+        <h2><span class="step-num">1</span> 拍照或上傳照片</h2>
+
+        <div class="input-tabs">
+          <button class="tab-btn active" data-tab="camera">📷 拍照</button>
+          <button class="tab-btn" data-tab="upload">🖼️ 上傳照片</button>
+        </div>
+
+        <div id="tab-camera" class="tab-panel active">
+          <div class="camera-box">
+            <video id="video" autoplay playsinline muted></video>
+            <canvas id="canvas" hidden></canvas>
+          </div>
+          <div class="camera-actions">
+            <button id="startCameraBtn" class="btn btn-secondary">開啟相機</button>
+            <button id="shootBtn" class="btn btn-primary" hidden>📸 拍照</button>
+          </div>
+        </div>
+
+        <div id="tab-upload" class="tab-panel">
+          <label for="fileInput" class="upload-drop">
+            <span class="upload-icon">⬆️</span>
+            <span>點此選擇照片</span>
+          </label>
+          <input type="file" id="fileInput" accept="image/*">
+        </div>
+
+        <div id="previewWrap" class="preview-wrap" hidden>
+          <img id="previewImg" alt="照片預覽">
+          <div class="result-actions">
+            <button id="nextToStyleBtn" class="btn btn-primary">下一步：選風格 →</button>
+            <button id="retakeBtn" class="btn btn-ghost">🔄 重新選擇</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 2: 選風格 -->
+      <section id="step-style" class="step">
+        <h2><span class="step-num">2</span> 選擇你的風格</h2>
+        <div class="style-grid">
+          <label class="style-card">
+            <input type="radio" name="style" value="shoujo" checked>
+            <div class="style-thumb style-shoujo">🌸</div>
+            <div class="style-name">少女漫畫風</div>
+            <div class="style-desc">大眼睛・粉色系・戀愛感</div>
+          </label>
+          <label class="style-card">
+            <input type="radio" name="style" value="shounen">
+            <div class="style-thumb style-shounen">🔥</div>
+            <div class="style-name">熱血少年風</div>
+            <div class="style-desc">粗線條・爆發感・高對比</div>
+          </label>
+          <label class="style-card">
+            <input type="radio" name="style" value="ghibli">
+            <div class="style-thumb style-ghibli">🍃</div>
+            <div class="style-name">吉卜力手繪風</div>
+            <div class="style-desc">水彩質感・溫暖懷舊</div>
+          </label>
+          <label class="style-card">
+            <input type="radio" name="style" value="cel">
+            <div class="style-thumb style-cel">⚡</div>
+            <div class="style-name">賽璐璐動畫風</div>
+            <div class="style-desc">鮮豔平塗・現代番劇感</div>
+          </label>
+        </div>
+
+        <button id="generateBtn" class="btn btn-primary btn-lg">🪄 開始生成</button>
+        <button id="backToCaptureBtn" class="btn btn-ghost btn-lg">← 換一張照片</button>
+      </section>
+
+      <!-- Step 3: 結果 -->
+      <section id="step-result" class="step">
+        <h2><span class="step-num">3</span> 你的動漫版登場！</h2>
+        <div id="loading" class="loading" hidden>
+          <div class="spinner"></div>
+          <p>AI 正在畫圖中，約需 10-20 秒...</p>
+        </div>
+        <div id="errorBox" class="error-box" hidden></div>
+        <div id="resultWrap" class="result-wrap" hidden>
+          <img id="resultImg" alt="生成結果">
+          <div class="result-actions">
+            <a id="downloadBtn" class="btn btn-primary" download="ai-style-result.png">⬇️ 下載圖片</a>
+            <button id="anotherBtn" class="btn btn-secondary">🔁 換個風格再試</button>
+            <button id="restartBtn" class="btn btn-ghost">📷 重新拍攝</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      Powered by OpenAI Image Generation
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
