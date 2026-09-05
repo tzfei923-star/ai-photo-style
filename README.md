@@ -19,6 +19,15 @@
    ```
 4. 開啟瀏覽器 http://localhost:3000
 
+## 峽谷選角機（激鬥峽谷選角分析）
+
+`public/wildrift/` 是一個獨立的像素風靜態頁面，點選五路（上路 / 打野 / 中路 / 下路 / 輔助）
+就能看到目前版本最強的角色與各分級名單。
+
+- 啟動伺服器後開 http://localhost:3000/wildrift/ ，或直接用瀏覽器打開 `public/wildrift/index.html`。
+- 分級資料整理自 [WildRiftFire Tier List](https://www.wildriftfire.com/tier-list)，
+  版本、日期與名單都放在 `public/wildrift/data.js`，改那個檔就能更新。
+
 ## 注意事項
 
 - 拍照功能需要瀏覽器相機權限，且必須在 `localhost` 或 HTTPS 環境下才能使用。

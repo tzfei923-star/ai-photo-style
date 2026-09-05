@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>峽谷選角機</title>
+<meta name="description" content="激鬥峽谷五路強勢角色分析，資料整理自 WildRiftFire tier list。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+TC:wght@500;700;900&display=swap">
+<style>
+  /* ── 色票（單一「遊戲機畫面」風格，所有顏色皆明確塗上） ── */
+  :root{
+    --sky:#9ED7F5;      /* 背景天空 */
+    --sky-2:#BCE4F9;    /* 背景格點 */
+    --paper:#FFF6E5;    /* 機台面板 */
+    --paper-2:#FFEBC8;  /* 面板次色 */
+    --ink:#2B2140;      /* 像素外框、文字 */
+    --ink-2:#6B6183;    /* 次要文字 */
+    --pink:#FF7EB6;     /* 主強調色 */
+    --tier-sp:#FFD23F;
+    --tier-s:#FF8A5B;
+    --tier-a:#6EE7B7;
+    --tier-b:#7FC8F8;
+    --tier-c:#C7B6F5;
+    --px:4px;           /* 像素外框粗細 */
+    --font-px:"Press Start 2P","Noto Sans TC",system-ui,sans-serif;
+    --font-tc:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;color:var(--ink);
+    font-family:var(--font-tc);font-size:15px;line-height:1.5;
+    background-color:var(--sky);
+    background-image:
+      linear-gradient(var(--sky-2) 2px, transparent 2px),
+      linear-gradient(90deg, var(--sky-2) 2px, transparent 2px);
+    background-size:24px 24px;
+    min-height:100vh;
+  }
+  .pixel{image-rendering:pixelated}
+
+  /* ── 機台外框 ── */
+  .cabinet{max-width:1040px;margin:0 auto;padding:20px 14px 48px}
+
+  header.cart{
+    background:var(--paper);border:var(--px) solid var(--ink);
+    box-shadow:8px 8px 0 var(--ink);
+    padding:18px 20px 16px;position:relative;
+    display:grid;grid-template-columns:1fr auto;gap:12px 20px;align-items:center;
+  }
+  header.cart::before{ /* 卡帶凹槽 */
+    content:"";position:absolute;left:20px;right:20px;top:-4px;height:8px;
+    background:repeating-linear-gradient(90deg,var(--ink) 0 8px,transparent 8px 16px);
+  }
+  .title{margin:0;font-family:var(--font-px);font-size:clamp(17px,3.4vw,28px);line-height:1.5;text-wrap:balance;letter-spacing:.5px}
+  .title small{display:block;font-size:10px;color:var(--ink-2);margin-top:8px;letter-spacing:2px}
+  .stamp{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+  .chip{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--font-px);font-size:10px;letter-spacing:1px;
+    background:var(--ink);color:var(--paper);padding:8px 12px;
+    box-shadow:inset -3px -3px 0 #4A3D6B;white-space:nowrap
+  }
+  .chip.pink{background:var(--pink);color:var(--ink);box-shadow:inset -3px -3px 0 #D9558F}
+  .chip .dot{width:8px;height:8px;background:var(--tier-sp);display:inline-block;animation:blink 1.2s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .mascot{position:absolute;right:210px;top:-46px;line-height:0}
+
+  /* ── 五路選擇 ── */
+  .lanes{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:34px 0 22px;
+  }
+  .lane{
+    appearance:none;cursor:pointer;text-align:left;font:inherit;color:var(--ink);
+    background:var(--paper);border:var(--px) solid var(--ink);
+    box-shadow:5px 5px 0 var(--ink);padding:12px 12px 10px;
+    display:flex;flex-direction:column;gap:6px;position:relative;
+    transition:transform .08s steps(2),box-shadow .08s steps(2);
+  }
+  .lane:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+  .lane:focus-visible{outline:3px dashed var(--ink);outline-offset:4px}
+  .lane[aria-pressed="true"]{
+    transform:translate(4px,4px);box-shadow:1px 1px 0 var(--ink);
+    background:var(--lane-color);
+  }
+  .lane[aria-pressed="true"]::after{
+    content:"▶";position:absolute;left:-18px;top:14px;font-family:var(--font-px);font-size:10px;
+    animation:nudge .6s steps(2) infinite;
+  }
+  @keyframes nudge{50%{transform:translateX(3px)}}
+  .lane .head{display:flex;align-items:center;gap:10px}
+  .lane .name{font-family:var(--font-px);font-size:13px;line-height:1.3}
+  .lane .sub{font-family:var(--font-px);font-size:7px;color:var(--ink-2);letter-spacing:1px;margin-top:4px}
+  .lane[aria-pressed="true"] .sub{color:var(--ink)}
+  .lane .best{font-size:12px;font-weight:700;line-height:1.45;border-top:2px dotted var(--ink-2);padding-top:6px;margin-top:2px}
+  .lane .best b{font-family:var(--font-px);font-size:8px;background:var(--ink);color:var(--tier-sp);padding:2px 4px;margin-right:4px;vertical-align:1px}
+
+  /* ── 螢幕 ── */
+  .screen{
+    background:var(--paper);border:var(--px) solid var(--ink);
+    box-shadow:8px 8px 0 var(--ink);position:relative;overflow:hidden;
+  }
+  .screen::after{ /* 極淡掃描線 */
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:repeating-linear-gradient(0deg,rgba(43,33,64,.045) 0 2px,transparent 2px 4px);
+  }
+  .screen-head{
+    background:var(--lane-color);border-bottom:var(--px) solid var(--ink);
+    padding:16px 20px;display:grid;grid-template-columns:auto 1fr;gap:14px 16px;align-items:center;
+  }
+  .screen-head h2{margin:0;font-family:var(--font-px);font-size:clamp(16px,3vw,22px);line-height:1.4}
+  .screen-head h2 span{display:block;font-size:9px;letter-spacing:2px;color:var(--ink);opacity:.75;margin-top:6px}
+  .screen-head p{grid-column:1 / -1;margin:0;font-weight:500;max-width:62ch;line-height:1.7;
+    background:var(--paper);border:3px solid var(--ink);padding:8px 12px;box-shadow:3px 3px 0 var(--ink)}
+
+  /* ── 頒獎台 ── */
+  .podium{padding:20px 20px 6px}
+  .podium h3{margin:0 0 12px;font-family:var(--font-px);font-size:11px;letter-spacing:1px;display:flex;align-items:center;gap:10px}
+  .podium-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+  .champ-big{
+    background:var(--paper-2);border:var(--px) solid var(--ink);box-shadow:5px 5px 0 var(--ink);
+    padding:14px;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;align-items:center;position:relative;
+  }
+  .champ-big .rank{
+    position:absolute;top:-12px;left:-12px;font-family:var(--font-px);font-size:10px;
+    background:var(--tier-sp);border:3px solid var(--ink);padding:5px 7px;box-shadow:2px 2px 0 var(--ink)
+  }
+  .champ-big .zh{font-size:20px;font-weight:900;line-height:1.2}
+  .champ-big .en{font-family:var(--font-px);font-size:8px;color:var(--ink-2);margin-top:6px;letter-spacing:.5px}
+  .champ-big > .spr{grid-row:1 / 3}
+  .champ-big .role{grid-column:2;justify-self:start}
+  .champ-big .spark{position:absolute;right:8px;top:6px;font-family:var(--font-px);font-size:10px;color:var(--tier-s)}
+  .podium .note{margin:12px 0 0;font-size:13px;color:var(--ink-2);font-weight:500}
+
+  /* ── 分級列 ── */
+  .tiers{padding:16px 20px 22px;display:flex;flex-direction:column;gap:12px;position:relative;z-index:1}
+  .tier-row{display:grid;grid-template-columns:64px 1fr;border:var(--px) solid var(--ink);box-shadow:4px 4px 0 var(--ink);background:var(--paper)}
+  .tier-label{
+    background:var(--tier-color);border-right:var(--px) solid var(--ink);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px 4px;
+    font-family:var(--font-px);font-size:16px;
+  }
+  .tier-label small{font-family:var(--font-tc);font-size:10px;font-weight:700;letter-spacing:1px}
+  .tier-list{display:flex;flex-wrap:wrap;gap:8px;padding:10px;min-height:60px;align-content:flex-start}
+  .tier-list .empty{font-size:12px;color:var(--ink-2);font-weight:500;align-self:center;padding:4px 6px}
+  .tile{
+    display:flex;align-items:center;gap:8px;
+    background:var(--paper-2);border:3px solid var(--ink);padding:5px 9px 5px 5px;
+    box-shadow:2px 2px 0 var(--ink);
+  }
+  .tile .zh{font-weight:700;font-size:13px;line-height:1.2}
+  .tile .en{font-family:var(--font-px);font-size:6px;color:var(--ink-2);margin-top:4px;letter-spacing:.3px}
+  .role{
+    display:inline-block;font-size:10px;font-weight:700;line-height:1;padding:3px 5px;
+    border:2px solid var(--ink);background:var(--paper);
+  }
+  .role[data-r="T"]{background:#D8E9F7}.role[data-r="F"]{background:#FFD9C7}.role[data-r="M"]{background:#E3DAFF}
+  .role[data-r="A"]{background:#FFD0E4}.role[data-r="R"]{background:#FFF0B3}.role[data-r="S"]{background:#D6F5E6}
+
+  /* ── 圖例 & 頁尾 ── */
+  .legend{margin:26px 0 0;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:12px;font-weight:700}
+  .legend .sw{display:inline-block;width:14px;height:14px;border:2px solid var(--ink);vertical-align:-2px;margin-right:4px}
+  footer{margin-top:18px;font-size:12px;color:var(--ink-2);font-weight:500;line-height:1.8}
+  footer a{color:var(--ink);font-weight:700}
+  footer .sub{font-family:var(--font-px);font-size:8px;letter-spacing:1px;margin-top:8px}
+
+  /* ── 像素圖 helper ── */
+  .spr{display:inline-block;position:relative;flex:none}
+  .spr i{position:absolute;left:0;top:0;width:var(--s);height:var(--s)}
+
+  @media (max-width:760px){
+    .lanes{grid-template-columns:repeat(2,1fr);gap:12px}
+    .lanes .lane:last-child{grid-column:1 / -1}
+    .lane[aria-pressed="true"]::after{display:none}
+    header.cart{grid-template-columns:1fr}
+    .stamp{align-items:flex-start;flex-direction:row;flex-wrap:wrap}
+    .mascot{right:16px}
+    .tier-row{grid-template-columns:52px 1fr}
+    .tier-label{font-size:13px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .chip .dot,.lane[aria-pressed="true"]::after{animation:none}
+    .lane{transition:none}
+  }
+</style>
+</head>
+<body>
+<div class="cabinet">
+
+  <header class="cart">
+    <div>
+      <h1 class="title">峽谷選角機<small>WILD RIFT PICK ANALYZER</small></h1>
+    </div>
+    <div class="stamp">
+      <span class="chip"><span class="dot"></span>PATCH <span id="patch">—</span></span>
+      <span class="chip pink">更新 <span id="date">—</span></span>
+    </div>
+    <div class="mascot" id="mascot" aria-hidden="true"></div>
+  </header>
+
+  <nav class="lanes" id="lanes" aria-label="選擇路線"></nav>
+
+  <section class="screen" id="screen" aria-live="polite">
+    <div class="screen-head" id="screen-head"></div>
+    <div class="podium" id="podium"></div>
+    <div class="tiers" id="tiers"></div>
+  </section>
+
+  <div class="legend" id="legend"></div>
+
+  <footer>
+    分級整理自 <a id="src" href="#" target="_blank" rel="noopener">WildRiftFire 角色 Tier List</a>（iTzSTU4RT 維護），依版本 <span id="patch2">—</span>（<span id="released">—</span> 上線）整理；名單整理日 <span id="date2">—</span>。
+    S+ / S / A 為主要參考，B / C 只列出有查到的角色，未列出的角色不代表不能玩。
+    <div class="sub">PRESS A LANE TO START ▶</div>
+  </footer>
+</div>
+
+<script src="data.js"></script>
+<script>
+(function(){
+  const D = window.WR_DATA;
+  const TIER_ORDER = ["S+","S","A","B","C"];
+  const TIER_COLOR = {"S+":"var(--tier-sp)","S":"var(--tier-s)","A":"var(--tier-a)","B":"var(--tier-b)","C":"var(--tier-c)"};
+  const TIER_WORD  = {"S+":"最強","S":"強勢","A":"推薦","B":"可用","C":"冷門"};
+  const ROLE_WORD  = {T:"坦克",F:"戰士",M:"法師",A:"刺客",R:"射手",S:"輔助"};
+
+  /* ── 像素精靈：用 box-shadow 畫圖 ── */
+  function sprite(rows, palette, s){
+    s = s || 4;
+    const shadows = [];
+    rows.forEach((row,y)=>{ [...row].forEach((ch,x)=>{
+      if(palette[ch]) shadows.push(`${x*s}px ${y*s}px 0 ${palette[ch]}`);
+    });});
+    const w = rows[0].length*s, h = rows.length*s;
+    const el = document.createElement('span');
+    el.className = 'spr pixel'; el.style.width = w+'px'; el.style.height = h+'px'; el.style.setProperty('--s', s+'px');
+    const i = document.createElement('i'); i.style.boxShadow = shadows.join(',');
+    el.appendChild(i); return el;
+  }
+  const K = '#2B2140';
+  const ICONS = {
+    sword: [
+      ".......KK",".....KKWK","....KWWK.","...KWWK..","..KWWK...","KKKWK....","KWKK.....","KKWK.....","KK.KK...."],
+    leaf: [
+      "....KKKK.","..KKGGGGK",".KGGGGGK.","KGGGKGGK.","KGGKGGK..","KGGGGK...",".KKKK....","..KK.....","..KK....."],
+    star: [
+      "....K....","...KYK...","..KYYYK..","KKKYYYKKK",".KYYYYYK.","..KYYYK..",".KYYKYYK.","KYK...KYK","K.......K"],
+    dragon: [
+      "...KKK...","..KRRRK..",".KRWRRRK.","KRRRRRRRK","KRRKKKRRK",".KRRRRRK.","..KRRRK..","...KRK...","....K...."],
+    heart: [
+      ".KK...KK.","KPPK.KPPK","KPWPKPPPK","KPPPPPPPK",".KPPPPPK.","..KPPPK..","...KPK...","....K....","........."],
+    crown: [
+      "K...K...K","KK.KKK.KK","KYKYYYKYK","KYYYYYYYK","KYYYYYYYK","KKKKKKKKK"]
+  };
+  const PAL = {K:K, W:'#FFF6E5', G:'#6EE7B7', Y:'#FFD23F', R:'#7FC8F8', P:'#FF7EB6'};
+  function icon(name, s){ return sprite(ICONS[name], PAL, s||3); }
+
+  // 吉祥物：小波羅 (Poro)
+  const PORO = [
+    "....KK....KK....",
+    "...KWWK..KWWK...",
+    "..KWWWWKKWWWWK..",
+    ".KWWWWWWWWWWWWK.",
+    ".KWWKKWWWWKKWWK.",
+    "KWWWKKWWWWKKWWWK",
+    "KWWWWWWWWWWWWWWK",
+    "KWWWWWWPPWWWWWWK",
+    "KWWWWWWPPWWWWWWK",
+    ".KWWWWWWWWWWWWK.",
+    ".KWWKWWWWWWKWWK.",
+    "..KKKWWWWWWKKK..",
+    "....KWWKKWWK....",
+    ".....KK..KK.....",
+  ];
+  document.getElementById('mascot').appendChild(sprite(PORO, {K:K, W:'#FFFFFF', P:'#FF7EB6'}, 4));
+
+  /* ── 角色頭像：由名字產生對稱像素圖 ── */
+  function hash(str){ let h=2166136261; for(const c of str){ h^=c.charCodeAt(0); h=Math.imul(h,16777619)>>>0; } return h; }
+  function avatar(name, laneColor, size){
+    size = size || 6;
+    let h = hash(name);
+    const rows = [];
+    for(let y=0;y<7;y++){
+      let half='';
+      for(let x=0;x<4;x++){ h = (h*1103515245+12345)>>>0; half += ((h>>>16)&3)===0 ? '.' : (((h>>>16)&3)===1 ? 'B' : 'A'); }
+      rows.push('.'+half+[...half].reverse().slice(1).join('')+'.');
+    }
+    const grid = rows.map(r=>'K'+r.slice(1,-1)+'K');
+    grid.unshift('KKKKKKKKK'); grid.push('KKKKKKKKK');
+    const inner = grid.map((r,i)=> i===0||i===grid.length-1 ? r : 'K'+r.slice(1,-1).replace(/K/g,'.')+'K');
+    return sprite(inner, {K:K, A:laneColor, B:'#FFF6E5', '.':'#FFE3A8'}, size);
+  }
+
+  /* ── 渲染 ── */
+  const laneById = Object.fromEntries(D.lanes.map(l=>[l.id,l]));
+  function topPicks(laneId){
+    const t = D.tiers[laneId];
+    for(const k of TIER_ORDER){ if(t[k] && t[k].length) return {tier:k, list:t[k]}; }
+    return {tier:"S+", list:[]};
+  }
+  function roleTag(code){
+    const r = document.createElement('span'); r.className='role'; r.dataset.r=code; r.textContent = ROLE_WORD[code]||code; return r;
+  }
+  function el(tag, cls, text){ const e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e; }
+
+  // 頁首資訊
+  document.getElementById('patch').textContent = D.patch;
+  document.getElementById('patch2').textContent = D.patch;
+  document.getElementById('date').textContent = D.compiled;
+  document.getElementById('date2').textContent = D.compiled;
+  document.getElementById('released').textContent = D.patchReleased;
+  document.getElementById('src').href = D.source;
+
+  // 五路按鈕
+  const nav = document.getElementById('lanes');
+  D.lanes.forEach(l=>{
+    const b = el('button','lane'); b.type='button'; b.dataset.lane=l.id; b.setAttribute('aria-pressed','false');
+    b.style.setProperty('--lane-color', l.color);
+    const head = el('div','head'); head.appendChild(icon(l.icon,3));
+    const nm = el('div'); nm.appendChild(el('div','name',l.name)); nm.appendChild(el('div','sub',l.sub)); head.appendChild(nm);
+    b.appendChild(head);
+    const tp = topPicks(l.id);
+    const best = el('div','best'); const tag = el('b',null,tp.tier); best.appendChild(tag);
+    best.appendChild(document.createTextNode(tp.list.slice(0,3).map(c=>c[1]).join('・')));
+    b.appendChild(best);
+    b.addEventListener('click',()=>select(l.id));
+    nav.appendChild(b);
+  });
+
+  function select(laneId){
+    const lane = laneById[laneId];
+    nav.querySelectorAll('.lane').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.lane===laneId)));
+    document.getElementById('screen').style.setProperty('--lane-color', lane.color);
+
+    // 標題區
+    const head = document.getElementById('screen-head'); head.innerHTML='';
+    head.appendChild(icon(lane.icon,5));
+    const h2 = el('h2',null,lane.name+' 目前最強'); h2.appendChild(el('span',null,lane.sub+' · PATCH '+D.patch));
+    head.appendChild(h2);
+    head.appendChild(el('p',null,lane.meta));
+
+    // 頒獎台
+    const pod = document.getElementById('podium'); pod.innerHTML='';
+    const tp = topPicks(laneId);
+    const h3 = el('h3'); h3.appendChild(icon('crown',3)); h3.appendChild(document.createTextNode(' 本路首選 · '+tp.tier+' '+TIER_WORD[tp.tier]));
+    pod.appendChild(h3);
+    const grid = el('div','podium-grid');
+    tp.list.forEach((c,i)=>{
+      const card = el('div','champ-big');
+      card.appendChild(el('span','rank', tp.tier));
+      card.appendChild(avatar(c[0], lane.color, 7));
+      const txt = el('div'); txt.appendChild(el('div','zh',c[1])); txt.appendChild(el('div','en',c[0].toUpperCase())); card.appendChild(txt);
+      card.appendChild(roleTag(c[2]));
+      card.appendChild(el('span','spark','✦'));
+      grid.appendChild(card);
+    });
+    pod.appendChild(grid);
+    if(tp.tier!=="S+"){
+      pod.appendChild(el('p','note','這個版本 '+lane.name+' 沒有 S+ 角色，以上為 '+tp.tier+' 級並列首選。'));
+    }
+
+    // 各級列
+    const tiers = document.getElementById('tiers'); tiers.innerHTML='';
+    TIER_ORDER.forEach(k=>{
+      const list = D.tiers[laneId][k] || [];
+      if(!list.length && (k==="C" || k==="B")) return; // 沒查到的低分級直接略過
+      const row = el('div','tier-row'); row.style.setProperty('--tier-color', TIER_COLOR[k]);
+      const lab = el('div','tier-label'); lab.appendChild(document.createTextNode(k)); lab.appendChild(el('small',null,TIER_WORD[k])); row.appendChild(lab);
+      const ul = el('div','tier-list');
+      if(!list.length){ ul.appendChild(el('span','empty','本版本無 '+k+' 級角色')); }
+      list.forEach(c=>{
+        const t = el('div','tile');
+        t.appendChild(avatar(c[0], lane.color, 4));
+        const txt = el('div'); txt.appendChild(el('div','zh',c[1])); txt.appendChild(el('div','en',c[0].toUpperCase())); t.appendChild(txt);
+        t.appendChild(roleTag(c[2]));
+        ul.appendChild(t);
+      });
+      row.appendChild(ul); tiers.appendChild(row);
+    });
+    try{ localStorage.setItem('wr-lane', laneId); }catch(e){}
+  }
+
+  // 圖例
+  const lg = document.getElementById('legend');
+  TIER_ORDER.forEach(k=>{ const s=el('span'); const sw=el('span','sw'); sw.style.background=TIER_COLOR[k]; s.appendChild(sw); s.appendChild(document.createTextNode(k+' '+TIER_WORD[k])); lg.appendChild(s); });
+  const sep = el('span',null,'｜'); sep.style.color='var(--ink-2)'; lg.appendChild(sep);
+  Object.keys(ROLE_WORD).forEach(k=>{ lg.appendChild(roleTag(k)); });
+
+  let start = 'baron';
+  try{ const saved = localStorage.getItem('wr-lane'); if(saved && laneById[saved]) start = saved; }catch(e){}
+  select(start);
+})();
+</script>
+</body>
+</html>
