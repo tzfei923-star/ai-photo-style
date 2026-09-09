@@ -33,3 +33,16 @@
 - 拍照功能需要瀏覽器相機權限，且必須在 `localhost` 或 HTTPS 環境下才能使用。
 - 若要部署到手機可用的公開網址，需要 HTTPS（例如用 ngrok、Vercel、或有 SSL 憑證的正式主機），否則手機瀏覽器會擋掉相機權限。
 - 圖片生成使用 OpenAI `gpt-image-1` 的 `/v1/images/edits`，每次生成都會消耗你的 OpenAI 額度，請留意用量與費用。
+
+## 線上版（GitHub Pages）
+
+選角機是純靜態頁面，適合用 GitHub Pages 發佈。到 repo 的
+Settings → Pages，Source 選 `Deploy from a branch`、分支選 `master`、資料夾選 `/ (root)`，
+按 Save 之後約一分鐘網站就會上線：
+
+- 首頁（自動轉址到選角機）：https://tzfei923-star.github.io/ai-photo-style/
+- 選角機本體：https://tzfei923-star.github.io/ai-photo-style/public/wildrift/
+
+根目錄的 `index.html` 與 `.nojekyll` 只服務 GitHub Pages，不影響 `server.js`
+（Node 伺服器是從 `public/` 提供靜態檔）。動漫變身鏡需要後端 API，無法放在 Pages 上，
+要用那個功能請依照上面的說明在本機啟動伺服器。
