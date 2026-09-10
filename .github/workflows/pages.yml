@@ -1,0 +1,48 @@
+# 自動部署 GitHub Pages
+#
+# 這個流程會在推送到 master 時執行，並且會自動幫這個 repo 開啟 GitHub Pages
+# （configure-pages 的 enablement: true），所以不需要手動到 Settings 裡設定。
+#
+# 網站內容就是 repo 根目錄：根目錄的 index.html 會轉址到 public/wildrift/ 選角機。
+
+name: 部署 GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+# deploy-pages 需要這些權限才能建立並發佈網站
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同時只跑一個部署，且不中斷進行中的部署
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 取出程式碼
+        uses: actions/checkout@v4
+
+      - name: 設定 Pages（尚未啟用時會自動啟用）
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: 打包網站內容
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
