@@ -36,9 +36,8 @@
 
 ## 線上版（GitHub Pages）
 
-選角機是純靜態頁面，適合用 GitHub Pages 發佈。到 repo 的
-Settings → Pages，Source 選 `Deploy from a branch`、分支選 `master`、資料夾選 `/ (root)`，
-按 Save 之後約一分鐘網站就會上線：
+選角機是純靜態頁面，由 `.github/workflows/pages.yml` 自動部署。推送到 `master`
+就會觸發，流程本身會在 Pages 尚未啟用時自動啟用它，不需要手動到 Settings 設定：
 
 - 首頁（自動轉址到選角機）：https://tzfei923-star.github.io/ai-photo-style/
 - 選角機本體：https://tzfei923-star.github.io/ai-photo-style/public/wildrift/
