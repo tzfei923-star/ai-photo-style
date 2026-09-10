@@ -36,8 +36,16 @@
 
 ## 線上版（GitHub Pages）
 
-選角機是純靜態頁面，由 `.github/workflows/pages.yml` 自動部署。推送到 `master`
-就會觸發，流程本身會在 Pages 尚未啟用時自動啟用它，不需要手動到 Settings 設定：
+選角機是純靜態頁面，用 GitHub Pages 的分支發佈即可。第一次要手動啟用一次：
+到 repo 的 **Settings → Pages**，Source 選 `Deploy from a branch`，
+分支選 `master`、資料夾選 `/ (root)`，按 Save。
+
+啟用之後，每次推送到 `master` 網站都會自動重新發佈，不需要再設定。
+
+（註：曾嘗試用 GitHub Actions 自動啟用 Pages，但 `GITHUB_TOKEN` 沒有建立 Pages
+網站的權限，會回傳 `Resource not accessible by integration`，因此改用分支發佈。）
+
+網址：
 
 - 首頁（自動轉址到選角機）：https://tzfei923-star.github.io/ai-photo-style/
 - 選角機本體：https://tzfei923-star.github.io/ai-photo-style/public/wildrift/
