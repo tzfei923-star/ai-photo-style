@@ -4,6 +4,14 @@
 
 Capture or upload a photo and transform it with shoujo, shounen, Ghibli, or cel-animation style presets.
 
+## 介面示意 · Interface preview
+
+![動漫變身鏡的拍照與上傳介面](docs/images/ai-photo-style-interface.png)
+
+首頁提供相機拍攝與照片上傳兩種入口；完成取圖後即可選擇風格並送出生成。
+
+The first step supports camera capture or photo upload. After selecting an image, choose a style and submit it for generation.
+
 ## 專案範圍 · Project scope
 
 本倉庫專注於 AI 照片生成。峽谷選角機已移至獨立的 [wildrift-pick-analyzer](https://github.com/tzfei923-star/wildrift-pick-analyzer) 倉庫。
