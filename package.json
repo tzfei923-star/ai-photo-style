@@ -1,6 +1,6 @@
 {
   "name": "ai-photo-style",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "上傳或拍照後，透過本機 Stable Diffusion 或 OpenAI 圖片 API 產生動漫風格圖片",
   "main": "server.js",
   "type": "commonjs",
