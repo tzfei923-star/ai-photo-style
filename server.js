@@ -11,6 +11,7 @@ const upload = multer({
 
 const PORT = process.env.PORT || 3000;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const OPENAI_IMAGE_MODEL = process.env.OPENAI_IMAGE_MODEL || 'gpt-image-2';
 const GENERATION_BACKEND = process.env.GENERATION_BACKEND || 'local'; // 'local' or 'openai'
 const SD_WEBUI_URL = process.env.SD_WEBUI_URL || 'http://127.0.0.1:7860';
 
@@ -122,7 +123,7 @@ async function generateWithOpenAI(req, res, style) {
   }
 
   const formData = new FormData();
-  formData.append('model', 'gpt-image-1');
+  formData.append('model', OPENAI_IMAGE_MODEL);
   formData.append('prompt', prompt);
   formData.append('size', '1024x1024');
   formData.append(
@@ -157,6 +158,9 @@ async function generateWithOpenAI(req, res, style) {
 app.listen(PORT, () => {
   console.log(`AI Photo Style 伺服器已啟動: http://localhost:${PORT}`);
   console.log(`生成後端: ${GENERATION_BACKEND === 'openai' ? 'OpenAI (付費 API)' : `本機 Stable Diffusion (${SD_WEBUI_URL})`}`);
+  if (GENERATION_BACKEND === 'openai') {
+    console.log(`OpenAI 圖片模型: ${OPENAI_IMAGE_MODEL}`);
+  }
   if (GENERATION_BACKEND === 'openai' && !OPENAI_API_KEY) {
     console.warn('警告：尚未設定 OPENAI_API_KEY，圖片生成功能將無法使用。請複製 .env.example 為 .env 並填入金鑰。');
   }

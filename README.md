@@ -1,55 +1,78 @@
-# 動漫變身鏡 AI Photo Style
+# 動漫變身鏡 · AI Photo Style
 
-拍照或上傳照片，選擇動漫風格（少女漫畫 / 熱血少年 / 吉卜力 / 賽璐璐動畫），
-用 OpenAI 圖片生成 API 產生風格化圖片。
+拍照或上傳照片，選擇少女漫畫、熱血少年、吉卜力或賽璐璐動畫風格，生成風格化圖片。
 
-## 設定
+Capture or upload a photo and transform it with shoujo, shounen, Ghibli, or cel-animation style presets.
 
-1. 安裝套件：
-   ```
-   npm install
-   ```
-2. 複製 `.env.example` 為 `.env`，填入你的 OpenAI API 金鑰：
-   ```
-   OPENAI_API_KEY=sk-xxxxxxxx
-   ```
-3. 啟動伺服器：
-   ```
-   npm start
-   ```
-4. 開啟瀏覽器 http://localhost:3000
+## 專案範圍 · Project scope
 
-## 峽谷選角機（激鬥峽谷選角分析）
+本倉庫專注於 AI 照片生成。峽谷選角機已移至獨立的 [wildrift-pick-analyzer](https://github.com/tzfei923-star/wildrift-pick-analyzer) 倉庫。
 
-`public/wildrift/` 是一個獨立的像素風靜態頁面，點選五路（上路 / 打野 / 中路 / 下路 / 輔助）
-就能看到目前版本最強的角色與各分級名單。
+This repository focuses on AI photo generation. The Wild Rift picker now lives in the separate repository linked above.
 
-- 啟動伺服器後開 http://localhost:3000/wildrift/ ，或直接用瀏覽器打開 `public/wildrift/index.html`。
-- 分級資料整理自 [WildRiftFire Tier List](https://www.wildriftfire.com/tier-list)，
-  版本、日期與名單都放在 `public/wildrift/data.js`，改那個檔就能更新。
+## 本機啟動 · Local setup
 
-## 注意事項
+需要 Node.js 20 以上。安裝套件、複製環境設定範例，再選擇生成後端。
 
-- 拍照功能需要瀏覽器相機權限，且必須在 `localhost` 或 HTTPS 環境下才能使用。
-- 若要部署到手機可用的公開網址，需要 HTTPS（例如用 ngrok、Vercel、或有 SSL 憑證的正式主機），否則手機瀏覽器會擋掉相機權限。
-- 圖片生成使用 OpenAI `gpt-image-1` 的 `/v1/images/edits`，每次生成都會消耗你的 OpenAI 額度，請留意用量與費用。
+Requires Node.js 20 or later. Install dependencies, copy the environment template, and choose a generation backend.
 
-## 線上版（GitHub Pages）
+```powershell
+npm ci
+Copy-Item .env.example .env
+npm start
+```
 
-選角機是純靜態頁面，用 GitHub Pages 的分支發佈即可。第一次要手動啟用一次：
-到 repo 的 **Settings → Pages**，Source 選 `Deploy from a branch`，
-分支選 `master`、資料夾選 `/ (root)`，按 Save。
+開啟 <http://localhost:3000>。
 
-啟用之後，每次推送到 `master` 網站都會自動重新發佈，不需要再設定。
+Open <http://localhost:3000>.
 
-（註：曾嘗試用 GitHub Actions 自動啟用 Pages，但 `GITHUB_TOKEN` 沒有建立 Pages
-網站的權限，會回傳 `Resource not accessible by integration`，因此改用分支發佈。）
+### 本機 Stable Diffusion（預設） · Local Stable Diffusion (default)
 
-網址：
+```dotenv
+GENERATION_BACKEND=local
+SD_WEBUI_URL=http://127.0.0.1:7860
+```
 
-- 首頁（自動轉址到選角機）：https://tzfei923-star.github.io/ai-photo-style/
-- 選角機本體：https://tzfei923-star.github.io/ai-photo-style/public/wildrift/
+先啟動支援 `/sdapi/v1/img2img` 的 Stable Diffusion WebUI，並啟用 `--api`。此模式不使用 OpenAI 金鑰；啟動 Node 伺服器不會自動安裝或啟動模型。
 
-根目錄的 `index.html` 與 `.nojekyll` 只服務 GitHub Pages，不影響 `server.js`
-（Node 伺服器是從 `public/` 提供靜態檔）。動漫變身鏡需要後端 API，無法放在 Pages 上，
-要用那個功能請依照上面的說明在本機啟動伺服器。
+Start a compatible Stable Diffusion WebUI with `--api`. This mode does not use an OpenAI key. Starting the Node server does not install or start the model service.
+
+### OpenAI 後端 · OpenAI backend
+
+```dotenv
+GENERATION_BACKEND=openai
+OPENAI_API_KEY=your-key-here
+OPENAI_IMAGE_MODEL=gpt-image-2
+```
+
+目前預設使用 `gpt-image-2` 與 `/v1/images/edits`。金鑰只放在伺服器端的 `.env`，不要提交到 Git。每次生成會使用 API 額度。
+
+The default is `gpt-image-2` through `/v1/images/edits`. Keep the API key in the server-side `.env` file and never commit it. Each generation consumes API usage.
+
+## 網站與部署 · Website and deployment
+
+[GitHub Pages 首頁](https://tzfei923-star.github.io/ai-photo-style/) 是專案說明頁。照片生成需要 Node 後端，無法只靠 GitHub Pages 執行。
+
+The GitHub Pages homepage describes the project. Photo generation requires the Node backend and cannot run on GitHub Pages alone.
+
+相機功能需要 `localhost` 或 HTTPS，以及瀏覽器授權。目前定位為本機工具；若要公開後端，需先加入存取控制與用量限制。
+
+Camera capture requires `localhost` or HTTPS and browser permission. The current app is intended for local use; a public backend needs access and usage controls.
+
+## 維護 · Maintenance
+
+- `public/`：照片操作介面 / photo UI.
+- `server.js`：生成 API 與後端選擇 / generation API and backend selection.
+- `.env.example`：設定範例 / configuration template.
+- `index.html`：GitHub Pages 專案說明頁 / Pages landing page.
+- `public/wildrift/index.html`：舊網址轉址 / legacy redirect only.
+
+一般修改應檢查照片上傳、風格選擇、錯誤訊息及舊網址轉址。有模型服務或 API 額度時，再驗證實際輸出。
+
+For routine changes, verify photo upload, style selection, error messages, and the legacy redirect. Test real generation when a model service or API credits are available.
+
+## 遷移紀錄 · Migration
+
+2026-09-14：將選角機拆為獨立倉庫並保留來源目錄的 Git 歷史。原 Pages 首頁改為照片專案說明，舊 `/public/wildrift/` 與本機 `/wildrift/` 會轉至新選角機。舊版仍保留於 Git 歷史。
+
+2026-09-14: The picker was extracted to a separate repository while preserving its directory history. The Pages root now introduces the photo project, and legacy picker routes redirect to the new app. Earlier versions remain in Git history.
