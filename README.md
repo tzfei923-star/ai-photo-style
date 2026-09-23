@@ -12,12 +12,6 @@ Capture or upload a photo and transform it with shoujo, shounen, Ghibli, or cel-
 
 The first step supports camera capture or photo upload. After selecting an image, choose a style and submit it for generation.
 
-## 專案範圍 · Project scope
-
-本倉庫專注於 AI 照片生成。峽谷選角機已移至獨立的 [wildrift-pick-analyzer](https://github.com/tzfei923-star/wildrift-pick-analyzer) 倉庫。
-
-This repository focuses on AI photo generation. The Wild Rift picker now lives in the separate repository linked above.
-
 ## 本機啟動 · Local setup
 
 需要 Node.js 20 以上。安裝套件、複製環境設定範例，再選擇生成後端。
